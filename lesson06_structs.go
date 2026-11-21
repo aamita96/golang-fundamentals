@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 )
 
 /*
@@ -10,9 +11,11 @@ import (
   - Go (Golang) does not support classes in the traditional OOP sense like Java, C++, or Python.
 
   - However, Go supports most object-oriented programming concepts using other features.
-    *
 
   - Struct is a blueprint which describes type of data. Its similar to the classes like other programming languages.
+
+  - A struct can be useful for grouping data together to create records.
+
     OOP Concepts in Traditional OOP Languages vs Go:
 
     1. Class              -> Struct
@@ -39,12 +42,9 @@ type Bill struct {
 // make new bill
 func newBill(name string) Bill {
 	b := Bill{
-		name: name,
-		items: map[string]float64{
-			"coffee":          5.99,
-			"sparkling water": 2.99,
-		},
-		tip: 0.5,
+		name:  name,
+		items: map[string]float64{}, // "coffee": 5.99, "sparkling water": 2.99,
+		tip:   0.0,
 	}
 
 	return b
@@ -52,7 +52,7 @@ func newBill(name string) Bill {
 
 // format the bill
 // By adding (b Bill) in front of the function name we're limiting this function to only to bill objects.
-func (b Bill) format() string {
+func (b *Bill) format() string {
 
 	formattedStr := b.name + " breakdown \n"
 	var total float64 = 0
@@ -63,10 +63,8 @@ func (b Bill) format() string {
 		total += v
 	}
 
-	if b.tip > 0 {
-		formattedStr += fmt.Sprintf("%-30v $%v \n", "Tip:", b.tip)
-		total += b.tip
-	}
+	formattedStr += fmt.Sprintf("%-30v $%v \n", "Tip:", b.tip)
+	total += b.tip
 
 	formattedStr += fmt.Sprintf("%-30v $%v \n", "Total:", total)
 	fmt.Println(formattedStr)
@@ -74,8 +72,36 @@ func (b Bill) format() string {
 	return formattedStr
 }
 
+// update tip
+func (b *Bill) updateTip(tip float64) {
+	b.tip = tip
+}
+
+func (b *Bill) addItems(key string, value float64) {
+	b.items[key] = value
+}
+
+// save bill
+func (b *Bill) save() {
+	data := []byte(b.format())
+
+	err := os.WriteFile("bills/"+b.name+".txt", data, 0644)
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("bill was saved to file")
+}
+
 func generateBill() {
 	myBill := newBill("lucia")
+
+	myBill.addItems("coffee", 5.66)
+	myBill.addItems("cake", 9.99)
+
+	myBill.updateTip(1)
+
 	myBill.format()
 	// fmt.Println(myBill)
 

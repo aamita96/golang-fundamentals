@@ -49,6 +49,8 @@ func hello_world() {
 	pointerCheck()
 	fmt.Println("-------------------------------- Structs in Go --------------------------------")
 	generateBill()
+	fmt.Println("-------------------------------- Accepting User Inputs in Go --------------------------------")
+	billGenerator()
 }
 
 func variables_examples() {

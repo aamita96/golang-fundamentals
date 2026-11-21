@@ -263,3 +263,187 @@ Floats             | Functions
 Booleans           |
 Arrays             |
 Structs            |
+
+
+## Structs
+- A struct (short for structure) is used to create a collection of members of different data types, into a single variable.
+
+- While arrays are used to store multiple values of the same data type into a single variable, structs are used to store multiple values of different data types into a single variable.
+- A struct can be useful for grouping data together to create records.
+
+### Declare a Struct
+
+```
+  type struct_name struct {
+    member1 datatype;
+    member2 datatype;
+    member3 datatype;
+    ...
+  }
+```
+
+### Example - 
+```
+  type Person struct {
+    name string
+    age int
+    job string
+    salary int
+  }
+```
+
+#### Best practices
+
+- Use UserProfile, not userProfile, for exported struct types.
+- Use userProfile, not UserProfile, for unexported struct types.
+- Use meaningful, concise names.
+- Avoid underscores in struct names.
+- Go uses capitalization to determine visibility:
+  - Starts with uppercase → exported.
+  - Starts with lowercase → unexported.
+
+`Recommendation: Follow Go's convention: PascalCase for exported structs and lowercase for unexported structs.`
+
+## Interfaces
+
+An interface is a type that defines a set of method signatures. 
+
+Any type that implements all the methods declared by an interface automatically satisfies that interface.
+
+The most important thing to understand is that Go interfaces are implemented implicitly. Unlike Java or C++, you don't need to explicitly declare that a struct implements an interface.
+
+### Why do we need interfaces?
+
+Imagine you have two types: Dog and Cat.
+
+Both can make sounds, but they make different sounds.
+
+Instead of writing separate functions for each animal, you can define a common interface called Animal.
+
+### Basic interface example
+
+```
+package main
+
+import "fmt"
+
+// Define an interface
+type Animal interface {
+    Sound()
+}
+
+// Dog struct
+type Dog struct{}
+
+func (d Dog) Sound() {
+    fmt.Println("Dog barks")
+}
+
+// Cat struct
+type Cat struct{}
+
+func (c Cat) Sound() {
+    fmt.Println("Cat meows")
+}
+
+// Function accepting an interface
+func MakeSound(a Animal) {
+    a.Sound()
+}
+
+func main() {
+    dog := Dog{}
+    cat := Cat{}
+
+    MakeSound(dog)
+    MakeSound(cat)
+}
+```
+
+Output - 
+
+```
+Dog barks
+Cat meows
+```
+
+### What's happening here?
+- We created an Animal interface with one method: Sound().
+- Dog implements the Sound() method.
+- Cat also implements the Sound() method.
+- Both automatically satisfy the Animal interface.
+- The MakeSound() function accepts any value that implements Animal.
+
+Notice that we never wrote something like:
+
+```
+  // Go doesn't require this
+  implements Animal
+```
+That's implicit interface implementation.
+
+### How interfaces work internally
+
+Consider this:
+
+```
+  type Shape interface {
+      Area() float64
+  }
+
+  type Circle struct {
+      Radius float64
+  }
+
+  func (c Circle) Area() float64 {
+      return 3.14 * c.Radius * c.Radius
+  }
+```
+Since `Circle` has the `Area() float64` method, it automatically implements `Shape`.
+
+You can use it like this:
+```
+  func PrintArea(s Shape) {
+      fmt.Println(s.Area())
+  }
+
+  func main() {
+      c := Circle{Radius: 5}
+      PrintArea(c)
+  }
+```
+Output - 
+```
+78.5
+```
+
+### Empty interface (`interface{}`)
+An empty interface has no methods.
+
+```
+interface{}
+```
+
+Because it requires no methods, any value can be assigned to it.
+
+Example:
+```
+  func PrintValue(value interface{}) {
+      fmt.Println(value)
+  }
+
+  func main() {
+      PrintValue(10)
+      PrintValue("Hello")
+      PrintValue(true)
+  }
+```
+In modern Go, you can use `any` instead of `interface{}`.
+
+```
+  func PrintValue(value any) {
+      fmt.Println(value)
+  }
+```
+
+`Note` - A type can satisfy multiple interfaces simultaneously. 
