@@ -51,6 +51,8 @@ func hello_world() {
 	generateBill()
 	fmt.Println("-------------------------------- Accepting User Inputs in Go --------------------------------")
 	billGenerator()
+	fmt.Println("-------------------------------- Interfaces in Go --------------------------------")
+	generateShapes()
 }
 
 func variables_examples() {
